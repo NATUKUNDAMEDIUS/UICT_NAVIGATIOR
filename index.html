@@ -75,7 +75,7 @@
     await setDoc(CFG_DOC, { value: newPw, updatedAt: serverTimestamp() });
   };
 
-  /* Listen for real-time password changes from other sessions */
+  /* Listen for real-time password changes from other sessions/devices */
   onSnapshot(CFG_DOC, (snap) => {
     if (snap.exists() && snap.data().value) {
       window._omLivePassword = snap.data().value;
@@ -349,26 +349,60 @@
   .lab-time{font-size:0.67rem;color:rgba(255,255,255,0.4);margin-top:4px;}
   #office-detail-section{display:none;}
 /* ══════════════════════════════════════════════════════════════
-   OFFICE MANAGEMENT MODAL — MULTI-SCREEN FLOW
+   OFFICE MANAGEMENT MODAL — MULTI-SCREEN FLOW (REVISED)
    ══════════════════════════════════════════════════════════════ */
 #office-overlay{position:fixed;inset:0;background:rgba(5,9,20,0.87);z-index:9600;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:16px;}
 #office-overlay.open{display:flex;}
-#office-modal{background:#0f0a2e;border:1.5px solid rgba(124,58,237,0.4);border-radius:18px;width:100%;max-width:560px;min-height:560px;max-height:94vh;display:flex;flex-direction:column;box-shadow:0 28px 72px rgba(0,0,0,0.75);animation:modalIn 0.28s cubic-bezier(0.34,1.56,0.64,1);overflow:hidden;}
-.om-head{background:linear-gradient(135deg,#1a0a3d,#0f0a2e);border-bottom:1px solid rgba(124,58,237,0.25);padding:18px 22px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+
+#office-modal{
+  background:#0f0a2e;
+  border:1.5px solid rgba(124,58,237,0.4);
+  border-radius:18px;
+  width:100%;max-width:560px;
+  min-height:560px;
+  max-height:94vh;
+  display:flex;flex-direction:column;
+  box-shadow:0 28px 72px rgba(0,0,0,0.75);
+  animation:modalIn 0.28s cubic-bezier(0.34,1.56,0.64,1);
+  overflow:hidden;
+}
+
+.om-head{
+  background:linear-gradient(135deg,#1a0a3d,#0f0a2e);
+  border-bottom:1px solid rgba(124,58,237,0.25);
+  padding:18px 22px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
 .om-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1rem;color:white;display:flex;align-items:center;gap:10px;}
 .om-badge{font-size:0.58rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:rgba(124,58,237,0.2);color:#a78bfa;border:1px solid rgba(124,58,237,0.35);border-radius:20px;padding:2px 9px;}
 .om-close{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:rgba(255,255,255,0.55);font-size:1.1rem;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s;}
 .om-close:hover{background:rgba(124,58,237,0.3);color:#a78bfa;}
+
+/* Screen container — slides between screens */
 .om-screens{flex:1;overflow:hidden;position:relative;min-height:420px;}
-.om-screen{position:absolute;inset:0;overflow-y:auto;padding:24px 22px;transition:transform 0.32s cubic-bezier(0.4,0,0.2,1), opacity 0.28s ease;}
+.om-screen{
+  position:absolute;inset:0;
+  overflow-y:auto;padding:24px 22px;
+  transition:transform 0.32s cubic-bezier(0.4,0,0.2,1), opacity 0.28s ease;
+}
 .om-screen::-webkit-scrollbar{width:3px;}
 .om-screen::-webkit-scrollbar-thumb{background:rgba(124,58,237,0.3);border-radius:3px;}
 .om-screen.active{transform:translateX(0);opacity:1;pointer-events:auto;z-index:2;}
 .om-screen.exit-left{transform:translateX(-110%);opacity:0;pointer-events:none;z-index:1;}
 .om-screen.exit-right{transform:translateX(110%);opacity:0;pointer-events:none;z-index:1;}
+
+/* ── SCREEN 1: PASSWORD ── */
 #om-screen-auth{background:transparent;}
 .om-auth-hero{text-align:center;margin-bottom:28px;}
-.om-auth-hero .auth-lock{width:64px;height:64px;border-radius:50%;background:rgba(124,58,237,0.18);border:2px solid rgba(124,58,237,0.35);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 14px;box-shadow:0 0 32px rgba(124,58,237,0.25);animation:lockGlow 2.5s ease-in-out infinite alternate;}
+.om-auth-hero .auth-lock{
+  width:64px;height:64px;border-radius:50%;
+  background:rgba(124,58,237,0.18);border:2px solid rgba(124,58,237,0.35);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.8rem;margin:0 auto 14px;
+  box-shadow:0 0 32px rgba(124,58,237,0.25);
+  animation:lockGlow 2.5s ease-in-out infinite alternate;
+}
 @keyframes lockGlow{from{box-shadow:0 0 16px rgba(124,58,237,0.2);}to{box-shadow:0 0 40px rgba(124,58,237,0.5);}}
 .om-auth-hero h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;color:white;margin-bottom:5px;}
 .om-auth-hero p{font-size:0.78rem;color:rgba(255,255,255,0.42);line-height:1.5;}
@@ -386,15 +420,26 @@
 .om-pw-eye:hover{color:rgba(255,255,255,0.7);}
 .om-unlock-btn{width:100%;padding:14px;border:none;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:white;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:all 0.2s;margin-top:14px;letter-spacing:0.3px;box-shadow:0 4px 20px rgba(124,58,237,0.4);}
 .om-unlock-btn:hover{background:linear-gradient(135deg,#6d28d9,#4c1d95);transform:translateY(-1px);box-shadow:0 6px 28px rgba(124,58,237,0.55);}
+.om-pw-loading{display:flex;align-items:center;gap:9px;padding:10px 14px;border-radius:9px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);font-size:0.78rem;color:rgba(255,255,255,0.5);margin-bottom:12px;}
+.om-pw-loading .spin{display:inline-block;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 .om-pub-divider{display:flex;align-items:center;gap:10px;margin:20px 0 14px;}
 .om-pub-divider::before,.om-pub-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.08);}
 .om-pub-divider span{font-size:0.62rem;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:rgba(255,255,255,0.28);}
+
+/* ── SCREEN 2: DASHBOARD ── */
 #om-screen-dash{background:transparent;}
 .om-dash-welcome{margin-bottom:24px;}
 .om-dash-welcome h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.05rem;color:white;margin-bottom:4px;}
 .om-dash-welcome p{font-size:0.76rem;color:rgba(255,255,255,0.4);}
 .om-dash-grid{display:flex;flex-direction:column;gap:10px;}
-.om-dash-btn{display:flex;align-items:center;gap:16px;padding:18px 20px;border:none;border-radius:13px;cursor:pointer;width:100%;text-align:left;transition:transform 0.18s, box-shadow 0.18s, background 0.18s;position:relative;overflow:hidden;}
+.om-dash-btn{
+  display:flex;align-items:center;gap:16px;
+  padding:18px 20px;border:none;border-radius:13px;cursor:pointer;
+  width:100%;text-align:left;
+  transition:transform 0.18s, box-shadow 0.18s, background 0.18s;
+  position:relative;overflow:hidden;
+}
 .om-dash-btn::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.2s;}
 .om-dash-btn:hover{transform:translateY(-2px);}
 .om-dash-btn:hover::before{opacity:1;}
@@ -422,10 +467,14 @@
 .om-dash-btn:hover .om-dash-arrow{color:rgba(255,255,255,0.5);}
 .om-signout{width:100%;padding:9px;background:none;border:1px solid rgba(217,4,41,0.2);border-radius:9px;color:rgba(217,4,41,0.55);font-family:'Outfit',sans-serif;font-size:0.78rem;cursor:pointer;transition:all 0.2s;margin-top:14px;}
 .om-signout:hover{border-color:rgba(217,4,41,0.5);color:#ff6b81;background:rgba(217,4,41,0.08);}
+
+/* ── SCREEN 3 SHARED: back bar ── */
 .om-back-bar{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
 .om-back-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:6px 12px;color:rgba(255,255,255,0.55);font-family:'Outfit',sans-serif;font-size:0.76rem;cursor:pointer;transition:all 0.15s;}
 .om-back-btn:hover{background:rgba(255,255,255,0.1);color:white;}
 .om-back-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.9rem;color:white;}
+
+/* ── SCREEN 3a: VIEW OFFICES ── */
 .off-filter-bar{display:flex;gap:8px;margin-bottom:14px;align-items:center;}
 .off-filter-sel{flex:1;padding:8px 12px;border:1.5px solid rgba(124,58,237,0.25);border-radius:8px;background:rgba(255,255,255,0.05);color:white;font-family:'Outfit',sans-serif;font-size:0.82rem;outline:none;cursor:pointer;}
 .off-filter-sel option{background:#1a0a3d;color:white;}
@@ -447,6 +496,8 @@
 .off-act-btn.edit:hover{background:rgba(124,58,237,0.4);color:white;}
 .off-act-btn.del{background:rgba(217,4,41,0.1);color:#ff6b81;border:1px solid rgba(217,4,41,0.2);}
 .off-act-btn.del:hover{background:rgba(217,4,41,0.3);color:white;}
+
+/* ── SCREEN 3b: ADD/EDIT ── */
 .om-submit{width:100%;padding:13px;border:none;border-radius:10px;background:#7c3aed;color:white;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.2s,transform 0.1s;margin-top:4px;}
 .om-submit:hover{background:#6d28d9;transform:translateY(-1px);}
 .om-submit:disabled{opacity:0.55;cursor:not-allowed;transform:none;}
@@ -454,12 +505,10 @@
 .om-cancel:hover{border-color:rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);}
 .om-edit-banner{background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);border-radius:8px;padding:8px 12px;font-size:0.75rem;color:#a78bfa;margin-bottom:12px;display:none;align-items:center;gap:8px;}
 .om-edit-banner.show{display:flex;}
+
+/* ── SCREEN 3c: CHANGE PASSWORD ── */
 .om-cpw-info{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:13px 15px;margin-bottom:18px;font-size:0.78rem;color:rgba(255,255,255,0.55);line-height:1.55;}
 .om-cpw-info strong{color:#fbbf24;display:block;margin-bottom:3px;font-size:0.82rem;}
-/* Password loading state */
-.om-pw-loading{display:flex;align-items:center;gap:9px;padding:10px 14px;border-radius:9px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);font-size:0.78rem;color:rgba(255,255,255,0.5);margin-bottom:12px;}
-.om-pw-loading .spin{display:inline-block;animation:spin 1s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
@@ -621,7 +670,6 @@
     <div id="search-list"></div>
   </div>
 </div>
-
 <!-- ══ OFFICE MANAGEMENT MODAL ══ -->
 <div id="office-overlay" onclick="officeOverlayClose(event)">
   <div id="office-modal">
@@ -634,9 +682,10 @@
       <button class="om-close" onclick="closeOfficeModal()">✕</button>
     </div>
 
+    <!-- SCREEN CONTAINER -->
     <div class="om-screens">
 
-      <!-- SCREEN 1: PASSWORD AUTH -->
+      <!-- ── SCREEN 1: PASSWORD AUTH ── -->
       <div class="om-screen active" id="om-screen-auth">
         <div class="om-auth-hero">
           <div class="auth-lock">🔐</div>
@@ -645,7 +694,6 @@
         </div>
 
         <div class="om-err" id="om-auth-err"></div>
-        <!-- Loading indicator shown while fetching password from Firestore -->
         <div class="om-pw-loading" id="om-pw-loading" style="display:none">
           <span class="spin">⏳</span> Verifying with server…
         </div>
@@ -659,6 +707,7 @@
           🔓 Unlock Office Manager
         </button>
 
+        <!-- Public view divider -->
         <div class="om-pub-divider"><span>Public Office Directory</span></div>
         <div class="off-filter-bar">
           <select class="off-filter-sel" id="om-pub-filter" onchange="renderPublicOfficeList()">
@@ -671,10 +720,10 @@
         </div>
       </div>
 
-      <!-- SCREEN 2: DASHBOARD -->
+      <!-- ── SCREEN 2: DASHBOARD ── -->
       <div class="om-screen exit-right" id="om-screen-dash">
         <div class="om-dash-welcome">
-          <h2> Welcome, Admin</h2>
+          <h2>✅ Welcome, Admin</h2>
           <p>Choose an action to manage the office registry.</p>
         </div>
         <div class="om-dash-grid">
@@ -698,7 +747,7 @@
             <div class="om-dash-icon">🔑</div>
             <div class="om-dash-body">
               <h3>Change Password</h3>
-              <p>Update the admin password — saved to Firebase, applies to all users instantly.</p>
+              <p>Update the admin password used to unlock the Office Manager.</p>
             </div>
             <span class="om-dash-arrow">›</span>
           </button>
@@ -706,7 +755,7 @@
         <button class="om-signout" onclick="omSignOut()">🔒 Sign Out</button>
       </div>
 
-      <!-- SCREEN 3a: VIEW OFFICES -->
+      <!-- ── SCREEN 3a: VIEW OFFICES ── -->
       <div class="om-screen exit-right" id="om-screen-view">
         <div class="om-back-bar">
           <button class="om-back-btn" onclick="gotoOmScreen('dash')">← Back</button>
@@ -723,13 +772,14 @@
         </div>
       </div>
 
-      <!-- SCREEN 3b: ADD / EDIT OFFICE -->
+      <!-- ── SCREEN 3b: ADD / EDIT OFFICE ── -->
       <div class="om-screen exit-right" id="om-screen-add">
         <div class="om-back-bar">
           <button class="om-back-btn" onclick="gotoOmScreen('dash')">← Back</button>
           <span class="om-back-title" id="om-add-screen-title">➕ Add New Office</span>
         </div>
 
+        <!-- Edit mode banner -->
         <div class="om-edit-banner" id="om-edit-banner">
           ✏️ <span>Editing: <strong id="om-edit-name"></strong></span>
           <button onclick="cancelOfficeEdit()" style="margin-left:auto;background:none;border:none;color:#a78bfa;cursor:pointer;font-size:0.78rem;text-decoration:underline">Cancel edit</button>
@@ -739,14 +789,16 @@
 
         <div class="om-field">
           <label>Office / Department Name *</label>
-          <input type="text" id="om-name" class="om-input" placeholder="Office or Department Name" maxlength="80">
+          <input type="text" id="om-name" class="om-input" placeholder="  Office or  Department Name" maxlength="80">
         </div>
+
         <div class="om-field">
           <label>Building (Location) *</label>
           <select id="om-building" class="om-input">
             <option value="">— Select Building —</option>
           </select>
         </div>
+
         <div class="om-2col">
           <div class="om-field">
             <label>Floor / Level *</label>
@@ -764,27 +816,31 @@
           </div>
           <div class="om-field">
             <label>Door / Room Number</label>
-            <input type="text" id="om-door" class="om-input" placeholder="Enter room/Door number" maxlength="30">
+            <input type="text" id="om-door" class="om-input" placeholder="Enter Room number" maxlength="30">
           </div>
         </div>
+
         <div class="om-2col">
           <div class="om-field">
             <label>Working Hours</label>
-            <input type="text" id="om-hours" class="om-input" placeholder="Active day and Hours" maxlength="60">
+            <input type="text" id="om-hours" class="om-input" placeholder="e.g Mon- Fri " maxlength="60">
           </div>
           <div class="om-field">
             <label>Contact (Phone / Email)</label>
-            <input type="text" id="om-contact" class="om-input" placeholder="Officer's phone contact" maxlength="60">
+            <input type="text" id="om-contact" class="om-input" placeholder="Phone/ contact" maxlength="60">
           </div>
         </div>
+
         <div class="om-field">
           <label>Head of Office / Officer in Charge</label>
-          <input type="text" id="om-head" class="om-input" placeholder="Enter officer's name" maxlength="60">
+          <input type="text" id="om-head" class="om-input" placeholder="Officer's name" maxlength="60">
         </div>
+
         <div class="om-field">
           <label>Description / Services Offered</label>
           <textarea id="om-desc" class="om-input" rows="3" placeholder="Brief description of what this office does" maxlength="200" style="padding-right:13px"></textarea>
         </div>
+
         <div class="om-field">
           <label>Office Icon (emoji)</label>
           <input type="text" id="om-icon" class="om-input" placeholder="🚪 (leave blank for default)" maxlength="4">
@@ -796,14 +852,13 @@
         <button class="om-cancel" onclick="cancelOfficeEdit()">Cancel</button>
       </div>
 
-      <!-- SCREEN 3c: CHANGE PASSWORD -->
+      <!-- ── SCREEN 3c: CHANGE PASSWORD ── -->
       <div class="om-screen exit-right" id="om-screen-changepw">
         <div class="om-back-bar">
           <button class="om-back-btn" onclick="gotoOmScreen('dash')">← Back</button>
           <span class="om-back-title">🔑 Change Password</span>
         </div>
 
-        
 
         <div class="om-err" id="om-cpw-err"></div>
 
@@ -824,13 +879,13 @@
         <div class="om-field" style="margin-top:10px">
           <label>Confirm New Password</label>
           <div class="om-pw-wrap">
-            <input type="password" id="om-cpw-confirm" class="om-pw-input" placeholder="Confirm new password" style="letter-spacing:2px">
+            <input type="password" id="om-cpw-confirm" class="om-pw-input" placeholder="Repeat new password" style="letter-spacing:2px">
             <button class="om-pw-eye" onclick="toggleCpwField('om-cpw-confirm',this)">👁</button>
           </div>
         </div>
 
         <button class="om-submit" onclick="changeOmPassword()" style="margin-top:16px;background:linear-gradient(135deg,#b45309,#92400e);">
-          <span></span> Update Password
+          <span>🔑</span> Update Password
         </button>
       </div>
 
@@ -907,18 +962,18 @@
         <div class="help-step"><div class="hs-num">3</div><div class="hs-body"><strong>Enter Start &amp; Destination</strong><p>Tap the input fields &mdash; a full-screen search overlay opens. Type to filter buildings, offices, or rooms.</p></div></div>
         <div class="help-step"><div class="hs-num">4</div><div class="hs-body"><strong>Office Search</strong><p>Searching for an office shows a &#x1F6AA; Office Details card with floor, door, hours and contact &mdash; and auto-routes to the building.</p></div></div>
         <div class="help-step"><div class="hs-num">5</div><div class="hs-body"><strong>Live Activities (&#x1F4CB; red button)</strong><p>Admins post real-time events. Enter admin password to post.</p></div></div>
-        <div class="help-step"><div class="hs-num">6</div><div class="hs-body"><strong>Office Manager (&#x1F3E2; purple button)</strong><p>Enter password &rarr; Dashboard. <em>Change Password</em> saves to Firebase &mdash; updates all users instantly.</p></div></div>
+        <div class="help-step"><div class="hs-num">6</div><div class="hs-body"><strong>Office Manager (&#x1F3E2; purple button)</strong><p>Enter password &rarr; Dashboard with 3 buttons: <em>View Offices</em>, <em>Add Office</em>, <em>Change Password</em>. Each slides to its own screen with a back button.</p></div></div>
         <div class="help-step"><div class="hs-num">7</div><div class="hs-body"><strong>Reset Map</strong><p>Tap &#x2299; (top-right of map) to return to campus overview.</p></div></div>
       </div>
       <div class="htab-panel" id="tab-strengths">
         <div class="help-h2">&#x2705; System Strengths</div>
         <div class="sw-grid">
-          <div class="sw-card strength"><div class="sw-icon">&#x1F511;</div><div class="sw-text"><strong>Firebase-Synced Password</strong><span>Admin password stored in Firestore — one change updates all devices in real time.</span></div></div>
-          <div class="sw-card strength"><div class="sw-icon">&#x1F6AA;</div><div class="sw-text"><strong>Real-Time Office Registry</strong><span>Admins manage offices via Firebase — updates visible instantly to all users.</span></div></div>
+          <div class="sw-card strength"><div class="sw-icon">&#x1F6AA;</div><div class="sw-text"><strong>Real-Time Office Registry</strong><span>Admins manage offices via Firebase &mdash; updates visible instantly to all users.</span></div></div>
           <div class="sw-card strength"><div class="sw-icon">&#x1F50D;</div><div class="sw-text"><strong>Office-Aware Search</strong><span>Searching for an office shows details AND routes to the building automatically.</span></div></div>
           <div class="sw-card strength"><div class="sw-icon">&#x1F9EE;</div><div class="sw-text"><strong>Dijkstra Pathfinding</strong><span>True shortest path through the campus road/walkway graph.</span></div></div>
           <div class="sw-card strength"><div class="sw-icon">&#x1F4E1;</div><div class="sw-text"><strong>GPS Integration</strong><span>Use detected location as start point for first-time visitors.</span></div></div>
           <div class="sw-card strength"><div class="sw-icon">&#x1F534;</div><div class="sw-text"><strong>Live Activity Board</strong><span>Real-time events with auto-expiry synced to all users.</span></div></div>
+          <div class="sw-card strength"><div class="sw-icon">&#x1F4F1;</div><div class="sw-text"><strong>Responsive PWA</strong><span>Works on mobile, installable offline.</span></div></div>
         </div>
       </div>
       <div class="htab-panel" id="tab-weaknesses">
@@ -952,8 +1007,8 @@ const CAMPUS = {
   name:"UICT – Nakawa, Kampala",
   center:[0.32868, 32.61495],
   zoom:17,
-  walkingSpeedKmh:4.5,
-  vehicleSpeedKmh:20
+  walkingSpeedKmh:1.5,
+  vehicleSpeedKmh:5
 };
 
 const BUILDINGS = [
@@ -1009,8 +1064,8 @@ const PATHS = [
   ["common_room","hostel",5],["central_junction","training_hall_south",80],["training_hall_north","training_hall",5],
   ["training_hall_south","training_hall",5],["central_junction","common_room",85],["common_room","junction_south_c",20],
   ["junction_south_c","cafeteria",20],["cafeteria","staff_quarters",20],["cafeteria","staff_quarters2",25],
-  ["staff_quarters","staff_quarters2",10],["main_gate","small_gate",60],["small_gate","parking_east",10],
-  ["parking_east","admin_roundabout",5],["parking_east","corner_se",20],["corner_se","corner_n",30],
+  ["staff_quarters","staff_quarters2",10],["small_gate","parking_east",10],
+  ["parking_east","admin_roundabout",10],["admin_roundabout","corner_se",20],["corner_se","corner_n",30],
   ["parking_east","admin_block",10],["parking_east","printing_place",8],["admin_roundabout","support_block",10],
   ["admin_roundabout","satcom1",5],["admin_roundabout","satcom2",10],["corner_se","satcom3",8],
   ["admin_roundabout","admin_block",10],["corner_se","satcom1",15],["corner_se","satcom2",12],
@@ -1025,23 +1080,22 @@ const PATHS = [
 
 const VEHICLE_PATHS = [
   ["main_gate","security_main",8],["security_main","central_junction",18],["central_junction","corner_n",10],
-  ["corner_n","road_corner_east",50],["road_corner_east","junction_south_c",30],
+ ["corner_n","road_corner_east",50],["road_corner_east","junction_south_c",30],
   ["main_block_north","security_main",10],["main_block","main_block_north",5],["main_block_north","central_junction",20],
   ["parking_east","main_block_south",10],["security_main","parking_west",10],["parking_west","reception",10],
   ["central_junction","guild_office",30],["guild_office","junction_mid_w",25],
   ["junction_mid_w","training_hall_north",25],["training_hall_north","training_hall",5],["common_room","junction_south_c",20],
-  ["small_gate","parking_east",10],["parking_east","admin_roundabout",10],["admin_roundabout","corner_se",15],["parking_east","admin_block",10],
+ ["small_gate","parking_east",10],["parking_east","admin_roundabout",10],["parking_east","admin_block",10],
   ["parking_east","printing_place",8],["parking_east","support_block",20],["parking_east","satcom1",10],
   ["parking_east","satcom2",15],
 ["corner_se","satcom1",15],["corner_se","satcom2",12],
 ["satcom1","satcom2",5],
-["satcom3","satcom2",5],["parking_east","satcom3",20],["admin_roundabout","corner_se",20],
+["satcom3","satcom2",5],["parking_east","satcom3",20],["admin_roundabout","corner_se",13],
   ["corner_se","corner_n",30],["road_corner_east","playground",10],["innovation_hub","parking_hub",10],
   ["junction_south_c","parking_hub",20],["innovation_hub","auditorium",5],["cafeteria","staff_quarters",20],
   ["cafeteria","staff_quarters2",25],["staff_quarters","staff_quarters2",10],["cafeteria","common_room",10],
   ["common_room","hostel",5]
 ];
-
 
 const TYPE_CFG={academic:{color:"#006b3f",icon:"🎓",label:"Academic / Classroom"},admin:{color:"#1d6b3f",icon:"🏢",label:"Administration"},hub:{color:"#7c2d96",icon:"💡",label:"Innovation Hub"},hostel:{color:"#7c3aed",icon:"🛏",label:"Hostel / Dormitory"},gate:{color:"#d97706",icon:"🚪",label:"Gate / Entrance"},hall:{color:"#dc2626",icon:"🎭",label:"Training Hall / Auditorium"},sports:{color:"#059669",icon:"⚽",label:"Sports Ground"},cafe:{color:"#be185d",icon:"☕",label:"Cafeteria / Canteen"},other:{color:"#6b7280",icon:"🏥",label:"Other"},security:{color:"#b45309",icon:"🛡",label:"Security Post"},store:{color:"#78716c",icon:"📦",label:"Store / Warehouse"},chapel:{color:"#7e22ce",icon:"⛪",label:"Chapel / Mosque"},parking:{color:"#334155",icon:"🅿",label:"Parking Area"},staff:{color:"#0f766e",icon:"👥",label:"Staff Block / Office"},landmark:{color:"#f59e0b",icon:"📍",label:"Campus Landmark"}};
 
@@ -1133,7 +1187,7 @@ function setTravelMode(mode){travelMode=mode;document.getElementById('tm-foot').
 function buildGraph(){const g={};BUILDINGS.forEach(b=>g[b.id]={});const paths=travelMode==='vehicle'?VEHICLE_PATHS:PATHS;paths.forEach(([a,b,d])=>{if(g[a])g[a][b]=d;if(g[b])g[b][a]=d;});return g;}
 function dijkstra(g,s,e){const dist={},prev={},vis=new Set();Object.keys(g).forEach(n=>dist[n]=Infinity);dist[s]=0;const pq=[[0,s]];while(pq.length){pq.sort((a,b)=>a[0]-b[0]);const[d,u]=pq.shift();if(vis.has(u))continue;vis.add(u);if(u===e)break;Object.entries(g[u]||{}).forEach(([v,w])=>{const nd=d+w;if(nd<dist[v]){dist[v]=nd;prev[v]=u;pq.push([nd,v]);}});}if(!isFinite(dist[e]))return null;const path=[];let c=e;while(c){path.unshift(c);c=prev[c];}return{path,distance:dist[e]};}
 function resolveInput(val){let item=BASE_IDX.find(x=>x.label.toLowerCase()===val.toLowerCase());if(item)return item.bldg;const pm=val.match(/^(.+?)\s*\((.+)\)$/);if(pm){const op=pm[1].trim().toLowerCase(),bp=pm[2].trim().toLowerCase();item=BASE_IDX.find(x=>x.label.toLowerCase()===op&&x.bldg&&x.bldg.name.toLowerCase()===bp);if(item)return item.bldg;item=BASE_IDX.find(x=>x.bldg&&x.bldg.name.toLowerCase()===bp);if(item)return item.bldg;}const qL=val.toLowerCase();item=BASE_IDX.find(x=>x.label.toLowerCase().includes(qL)||(x.bldg&&x.bldg.name.toLowerCase().includes(qL)));return item?item.bldg:null;}
-function navigate(){if(!selFrom){const v=document.getElementById('from-in').value.trim();if(v)selFrom=resolveInput(v);}if(!selTo){const v=document.getElementById('to-in').value.trim();if(v)selTo=resolveInput(v);}const err=document.getElementById('err-msg');err.style.display='none';document.getElementById('result-section').style.display='none';if(!selFrom){err.textContent='⚠️ Please enter or select a starting point.';err.style.display='block';return;}if(!selTo){err.textContent='⚠️ Please enter or select a destination.';err.style.display='block';return;}if(selFrom.id===selTo.id){toast('You are already at '+selFrom.name);return;}const g=buildGraph();let result=dijkstra(g,selFrom.id,selTo.id);if(!result&&travelMode==='vehicle'){err.textContent='⚠️ No official vehicle route. Switch to On Foot.';err.style.display='block';return;}if(!result){err.textContent='⚠️ No path found between these two locations.';err.style.display='block';return;}drawRoute(result);renderResult(result);document.getElementById('clear-btn').style.display='block';}
+function navigate(){if(!selFrom){const v=document.getElementById('from-in').value.trim();if(v)selFrom=resolveInput(v);}if(!selTo){const v=document.getElementById('to-in').value.trim();if(v)selTo=resolveInput(v);}const err=document.getElementById('err-msg');err.style.display='none';document.getElementById('result-section').style.display='none';if(!selFrom){err.textContent='⚠️ Please enter or select a starting point.';err.style.display='block';return;}if(!selTo){err.textContent='⚠️ Please enter or select a destination.';err.style.display='block';return;}if(selFrom.id===selTo.id){toast('You are already at '+selFrom.name);return;}const g=buildGraph();let result=dijkstra(g,selFrom.id,selTo.id);if(!result&&travelMode==='vehicle'){err.textContent='⚠️ No official vehicle route. Switch to On Foot.';err.style.display='block';return;}if(!result){err.textContent='⚠️ No path found between these two locations.';err.style.display='block';return;}drawRoute(result);renderResult(result);showResultSection();document.getElementById('clear-btn').style.display='block';}
 let routeLayerGroup=null;
 function clearRouteLayer(){if(routeLayerGroup){map.removeLayer(routeLayerGroup);routeLayerGroup=null;}if(routeLayer){map.removeLayer(routeLayer);routeLayer=null;}}
 function drawRoute(r){clearRouteLayer();routeLayerGroup=L.featureGroup().addTo(map);const startB=r.path.map(id=>BUILDINGS.find(x=>x.id===id)).find(Boolean);const endB=r.path.map(id=>BUILDINGS.find(x=>x.id===id)).filter(Boolean).slice(-1)[0];if(!startB||!endB)return;const coords=r.path.map(id=>BUILDINGS.find(x=>x.id===id)).filter(Boolean).map(b=>[b.lat,b.lng]);const routeColor=travelMode==='vehicle'?'#92400e':'#c0521a';routeLayer=L.polyline(coords,{color:routeColor,weight:5,opacity:1,lineJoin:'round',lineCap:'round'});routeLayer.addTo(routeLayerGroup);L.polyline(coords,{color:'#f5c800',weight:2,opacity:0.85,lineJoin:'round',lineCap:'round',dashArray:'8 10'}).addTo(routeLayerGroup);const sIc=L.divIcon({className:'',html:`<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12" fill="#006b3f" stroke="white" stroke-width="2"/><circle cx="13" cy="13" r="5" fill="white"/></svg>`,iconSize:[30,30],iconAnchor:[13,13]});L.marker([startB.lat,startB.lng],{icon:sIc,zIndexOffset:1000}).addTo(routeLayerGroup).bindTooltip('Start: '+startB.name);const eIc=L.divIcon({className:'',html:`<svg xmlns="http://www.w3.org/2000/svg" width="28" height="36" viewBox="0 0 28 36"><path d="M14 0C7.4 0 2 5.4 2 12c0 8 12 24 12 24S26 20 26 12C26 5.4 20.6 0 14 0z" fill="#d90429" stroke="white" stroke-width="1.5"/><circle cx="14" cy="12" r="5" fill="white"/></svg>`,iconSize:[35,43],iconAnchor:[14,36]});L.marker([endB.lat,endB.lng],{icon:eIc,zIndexOffset:1000}).addTo(routeLayerGroup).bindTooltip('Destination: '+endB.name);if(routeLayer)map.fitBounds(routeLayer.getBounds(),{padding:[60,60]});}
@@ -1162,13 +1216,12 @@ function overlayClose(e){if(e.target===document.getElementById('help-overlay'))c
 function switchTab(name){document.querySelectorAll('.htab').forEach((t,i)=>{const ids=['how','strengths','weaknesses','quickref'];t.classList.toggle('active',ids[i]===name);});document.querySelectorAll('.htab-panel').forEach(p=>{p.classList.toggle('active',p.id==='tab-'+name);});}
 document.addEventListener('keydown',e=>{if(e.key==='Enter')navigate();if(e.key==='Escape'){closeHelp();closeSearchOverlay();closeOfficeModal();}});
 window.addEventListener('load',()=>{initMap();renderRecent();rebuildDynamicSearchIndex();});
-
 /* ══════════════════════════════════════════════════════════════
-   OFFICE MANAGEMENT MODAL — FIRESTORE-BACKED PASSWORD
+   OFFICE MANAGEMENT MODAL — MULTI-SCREEN FLOW
    ══════════════════════════════════════════════════════════════ */
 let omUnlocked = false;
 let editingOfficeDocId = null;
-let _currentOmScreen = 'auth';
+let _currentOmScreen = 'auth'; // 'auth' | 'dash' | 'view' | 'add' | 'changepw'
 
 /**
  * _omLivePassword — kept in sync by the Firestore onSnapshot listener
@@ -1182,18 +1235,27 @@ function gotoOmScreen(to) {
   const fromEl = document.getElementById('om-screen-' + _currentOmScreen);
   const toEl   = document.getElementById('om-screen-' + to);
   if (!fromEl || !toEl) return;
+
+  // Direction: going 'deeper' slides left; going 'back' slides right
   const goingBack = (to === 'auth' || to === 'dash');
+
   fromEl.classList.remove('active');
   fromEl.classList.add(goingBack ? 'exit-right' : 'exit-left');
+
   toEl.classList.remove('exit-left', 'exit-right');
   toEl.classList.add('active');
+
   _currentOmScreen = to;
+
+  // Refresh data when entering relevant screens
   if (to === 'view') renderOfficeList();
+  if (to === 'dash') { /* nothing extra */ }
   if (to === 'auth') { renderPublicOfficeList(); }
 }
 
 async function openOfficeModal() {
   document.getElementById('office-overlay').classList.add('open');
+  // Always start at auth screen
   ['auth','dash','view','add','changepw'].forEach(s => {
     const el = document.getElementById('om-screen-' + s);
     if (el) { el.classList.remove('active','exit-left','exit-right'); el.classList.add('exit-right'); }
@@ -1222,9 +1284,11 @@ function closeOfficeModal() {
   document.getElementById('office-overlay').classList.remove('open');
   editingOfficeDocId = null;
 }
+
 function officeOverlayClose(e) {
   if (e.target === document.getElementById('office-overlay')) closeOfficeModal();
 }
+
 function omSignOut() {
   omUnlocked = false;
   editingOfficeDocId = null;
@@ -1247,7 +1311,7 @@ async function verifyOmPassword() {
   const btn    = document.querySelector('.om-unlock-btn');
 
   errEl.style.display = 'none';
-  loader.style.display = 'flex';
+  if (loader) loader.style.display = 'flex';
   if (btn) btn.disabled = true;
 
   /* Always fetch the freshest password from Firestore before comparing */
@@ -1255,7 +1319,7 @@ async function verifyOmPassword() {
     try { window._omLivePassword = await window._fbGetPassword(); } catch(e) {}
   }
 
-  loader.style.display = 'none';
+  if (loader) loader.style.display = 'none';
   if (btn) btn.disabled = false;
 
   if (pw !== window._omLivePassword) {
@@ -1272,7 +1336,7 @@ async function verifyOmPassword() {
   gotoOmScreen('dash');
 }
 
-/* ── Change Password — saves to Firestore ── */
+/* ── Change Password ── */
 function toggleCpwField(id, btn) {
   const inp = document.getElementById(id);
   if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
@@ -1310,10 +1374,10 @@ async function changeOmPassword() {
     await window._fbSetPassword(newPw);
     window._omLivePassword = newPw; // update local cache immediately
     ['om-cpw-current','om-cpw-new','om-cpw-confirm'].forEach(id => { document.getElementById(id).value = ''; });
-    toast('✅ Password updated — all devices will use the new password immediately');
+    toast(' Password updated successfully');
     gotoOmScreen('dash');
   } catch(e) {
-    errEl.textContent = '❌ Failed to save: ' + e.message; errEl.style.display = 'block';
+    errEl.textContent = ' Failed to save: ' + e.message; errEl.style.display = 'block';
   }
   if (btn) { btn.disabled = false; btn.innerHTML = '<span>🔑</span> Update Password'; }
 }
@@ -1321,13 +1385,17 @@ async function changeOmPassword() {
 /* ── Building dropdowns ── */
 function populateOmBuildingDropdowns() {
   const skip = new Set(['main_block_north','main_block_south','training_hall_north','training_hall_south','steps_hub_playground','corner_n','corner_se','road_corner_east','junction_mid_w','junction_south_c','admin_roundabout','central_junction']);
-  const bldgs = BUILDINGS.filter(b => !skip.has(b.id)).sort((a, b) => a.name.localeCompare(b.name));
+  const bldgs = BUILDINGS.filter(b => !skip.has(b.id));
+
   const omBldg = document.getElementById('om-building');
   if (omBldg) omBldg.innerHTML = '<option value="">— Select Building —</option>' + bldgs.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+
   const omFilter = document.getElementById('om-filter-bldg');
   if (omFilter) omFilter.innerHTML = '<option value="">All Buildings</option>' + bldgs.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+
   const pubFilter = document.getElementById('om-pub-filter');
   if (pubFilter) pubFilter.innerHTML = '<option value="">All Buildings</option>' + bldgs.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+
   const amBldg = document.getElementById('am-building');
   if (amBldg && amBldg.children.length <= 1)
     amBldg.innerHTML = '<option value="">— Choose a building —</option>' + bldgs.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
@@ -1397,7 +1465,7 @@ function renderPublicOfficeList() {
   }).join('');
 }
 
-/* ── Edit office ── */
+/* ── Edit office (called from view screen) ── */
 function editOffice(docId) {
   const o = _dynamicOffices.find(x => x._docId === docId);
   if (!o) return;
@@ -1418,6 +1486,7 @@ function editOffice(docId) {
   document.getElementById('om-add-screen-title').textContent = '✏️ Edit Office';
   gotoOmScreen('add');
 }
+
 function cancelOfficeEdit() {
   editingOfficeDocId = null;
   clearOfficeForm();
@@ -1426,6 +1495,7 @@ function cancelOfficeEdit() {
   document.getElementById('om-add-screen-title').textContent = '➕ Add New Office';
   gotoOmScreen('dash');
 }
+
 function clearOfficeForm() {
   ['om-name','om-door','om-hours','om-contact','om-head','om-desc','om-icon'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
@@ -1461,9 +1531,9 @@ async function submitOffice() {
     const wasEditing = !!editingOfficeDocId;
     cancelOfficeEdit();
     const b = BUILDINGS.find(x => x.id === buildingId);
-    toast((wasEditing ? ' Updated: ' : ' Office added: ') + name + (b ? ' in ' + b.name : ''));
+    toast((wasEditing ? '✅ Updated: ' : '✅ Office added: ') + name + (b ? ' in ' + b.name : ''));
   } catch(err) {
-    errEl.textContent = 'Office added successfully';
+    errEl.textContent = ' New office saved refresh the page';
   }
   btn.disabled = false;
   btn.innerHTML = '<span>💾</span> <span id="om-submit-lbl">' + (editingOfficeDocId ? 'Update' : 'Save') + ' Office</span>';
@@ -1477,55 +1547,19 @@ async function deleteOffice(docId, name) {
   catch(err) { toast('❌ Delete failed: ' + err.message); }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   LIVE ACTIVITY SYSTEM
-   ══════════════════════════════════════════════════════════════ */
+/* Remove old switchOmTab — replaced by gotoOmScreen */
+
+/* LIVE ACTIVITY SYSTEM */
 let activityMarkers={},activityInterval=null,_cachedActivities=[];
 window._onActivitiesUpdate=function(live){_cachedActivities=live;refreshActivityDisplay();};
 function purgeExpired(){return _cachedActivities;}
-
-async function openActivityModal(){
-  purgeExpired();renderAmCurrentList();
-  document.getElementById('activity-overlay').classList.add('open');
-  document.getElementById('am-form-area').style.display='none';
-  document.getElementById('am-auth-btns').style.display='block';
-  document.getElementById('am-auth-step').style.display='block';
-  document.getElementById('am-pw').value='';clearAmError();
-  const now=new Date();
-  document.getElementById('am-start').value=now.toTimeString().slice(0,5);
-  const end=new Date(now.getTime()+60*60*1000);
-  document.getElementById('am-end').value=end.toTimeString().slice(0,5);
-  populateOmBuildingDropdowns();
-  /* Pre-fetch password so activity modal is also synced */
-  if (window._fbGetPassword) {
-    try { window._omLivePassword = await window._fbGetPassword(); } catch(e) {}
-  }
-}
-
+async function openActivityModal(){purgeExpired();renderAmCurrentList();document.getElementById('activity-overlay').classList.add('open');document.getElementById('am-form-area').style.display='none';document.getElementById('am-auth-btns').style.display='block';document.getElementById('am-auth-step').style.display='block';document.getElementById('am-pw').value='';clearAmError();const now=new Date();document.getElementById('am-start').value=now.toTimeString().slice(0,5);const end=new Date(now.getTime()+60*60*1000);document.getElementById('am-end').value=end.toTimeString().slice(0,5);populateOmBuildingDropdowns();if(window._fbGetPassword){try{window._omLivePassword=await window._fbGetPassword();}catch(e){}}}
 function closeActivityModal(){document.getElementById('activity-overlay').classList.remove('open');}
 function activityOverlayClose(e){if(e.target===document.getElementById('activity-overlay'))closeActivityModal();}
 function toggleAmPw(){const inp=document.getElementById('am-pw'),eye=document.getElementById('am-pw-eye');if(inp.type==='password'){inp.type='text';eye.textContent='🙈';}else{inp.type='password';eye.textContent='👁';}}
 function clearAmError(){document.querySelectorAll('#am-error,#am-error-auth').forEach(el=>{el.style.display='none';el.textContent='';});}
 function showAmError(msg){document.querySelectorAll('#am-error').forEach(el=>{el.textContent=msg;el.style.display='block';});}
-
-async function verifyAmPassword(){
-  const pw=document.getElementById('am-pw').value.trim();
-  /* Always fetch latest from Firestore */
-  if (window._fbGetPassword) {
-    try { window._omLivePassword = await window._fbGetPassword(); } catch(e) {}
-  }
-  if(pw !== window._omLivePassword){
-    showAmError('❌ Incorrect password.');
-    document.getElementById('am-pw').style.borderColor='rgba(217,4,41,0.7)';
-    setTimeout(()=>{document.getElementById('am-pw').style.borderColor='';},1500);
-    return;
-  }
-  document.getElementById('am-auth-step').style.display='none';
-  document.getElementById('am-auth-btns').style.display='none';
-  document.getElementById('am-form-area').style.display='flex';
-  clearAmError();
-}
-
+async function verifyAmPassword(){const pw=document.getElementById('am-pw').value.trim();if(window._fbGetPassword){try{window._omLivePassword=await window._fbGetPassword();}catch(e){}}if(pw!==window._omLivePassword){showAmError('❌ Incorrect password.');document.getElementById('am-pw').style.borderColor='rgba(217,4,41,0.7)';setTimeout(()=>{document.getElementById('am-pw').style.borderColor='';},1500);return;}document.getElementById('am-auth-step').style.display='none';document.getElementById('am-auth-btns').style.display='none';document.getElementById('am-form-area').style.display='flex';clearAmError();}
 async function submitActivity(){const bid=document.getElementById('am-building').value.trim(),desc=document.getElementById('am-desc').value.trim(),start=document.getElementById('am-start').value,end=document.getElementById('am-end').value;if(!bid){showAmError('⚠️ Please select a building.');return;}if(!desc){showAmError('⚠️ Please enter an activity description.');return;}if(!start||!end){showAmError('⚠️ Please set both start and end times.');return;}function todayTs(hhmm){const[h,m]=hhmm.split(':').map(Number),d=new Date();d.setHours(h,m,0,0);return d.getTime();}const startTs=todayTs(start);let endTs=todayTs(end);if(endTs<=startTs)endTs+=24*60*60*1000;if(endTs<=Date.now()){showAmError('⚠️ End time is in the past.');return;}if(!window._fbReady){showAmError('⚠️ Firebase not connected.');return;}const btn=document.querySelector('.am-submit');btn.disabled=true;btn.innerHTML='⏳ Posting…';try{await window._fbSaveActivity({buildingId:bid,description:desc,startTs,endTs,start,end});closeActivityModal();const b=BUILDINGS.find(x=>x.id===bid);toast('📌 Activity posted: '+(b?b.name:bid));}catch(err){showAmError('❌ Failed: '+err.message);btn.disabled=false;btn.innerHTML='<span>📌</span> Post Live Activity';}}
 async function clearAllActivities(){if(!window._fbReady){toast('⚠️ Firebase not connected.');return;}try{await window._fbClearAll();closeActivityModal();toast('🗑 All activities cleared.');}catch(err){toast('❌ Clear failed: '+err.message);}}
 function refreshActivityDisplay(){const live=purgeExpired();Object.values(activityMarkers).forEach(m=>{try{map.removeLayer(m);}catch(e){}});activityMarkers={};live.forEach(a=>{const b=BUILDINGS.find(x=>x.id===a.buildingId);if(!b)return;const actIc=L.divIcon({className:'',html:`<div style="position:relative;width:36px;height:36px;display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;border-radius:50%;border:2.5px solid #d90429;animation:fabRing 1.8s ease-out infinite;opacity:0.7"></div><div style="width:16px;height:16px;border-radius:50%;background:#d90429;border:2.5px solid white;transform:rotate(-90deg)"></div></div>`,iconSize:[36,36],iconAnchor:[18,18]});const marker=L.marker([b.lat,b.lng],{icon:actIc,zIndexOffset:2000}).addTo(map);marker.bindTooltip(`🔴 LIVE: ${a.description}`,{sticky:true,className:'path-tip'});marker.on('click',()=>showBInfo(b));activityMarkers[a.buildingId]=marker;});buildMarquee();appendActivitiesToMarquee();if(lastBldg&&document.getElementById('binfo-section').style.display!=='none')refreshBInfoDynamicOffices(lastBldg);}
