@@ -1385,7 +1385,8 @@ async function changeOmPassword() {
 /* ── Building dropdowns ── */
 function populateOmBuildingDropdowns() {
   const skip = new Set(['main_block_north','main_block_south','training_hall_north','training_hall_south','steps_hub_playground','corner_n','corner_se','road_corner_east','junction_mid_w','junction_south_c','admin_roundabout','central_junction']);
-  const bldgs = BUILDINGS.filter(b => !skip.has(b.id));
+  const bldgs = BUILDINGS.filter(b => !skip.has(b.id))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   const omBldg = document.getElementById('om-building');
   if (omBldg) omBldg.innerHTML = '<option value="">— Select Building —</option>' + bldgs.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
@@ -1400,7 +1401,6 @@ function populateOmBuildingDropdowns() {
   if (amBldg && amBldg.children.length <= 1)
     amBldg.innerHTML = '<option value="">— Choose a building —</option>' + bldgs.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
 }
-
 /* ── Render office list (admin) ── */
 function renderOfficeList() {
   const filter = (document.getElementById('om-filter-bldg') || {}).value || '';
